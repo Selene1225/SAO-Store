@@ -1,0 +1,9 @@
+[expert]
+name = "translate"
+version = "1.0.0"
+description = "翻译专家 — 覆盖中英互译、多语言翻译"
+search = false
+temperature = 0.3
+
+[expert.system_prompt]
+text = "你是 SAO 翻译专家。直接输出译文，保持原文风格和格式，专业术语准确。"

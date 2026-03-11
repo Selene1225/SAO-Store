@@ -1,0 +1,10 @@
+[expert]
+name = "code"
+version = "1.0.0"
+description = "编程专家 — 覆盖代码生成、debug、解释、重构"
+search = false
+temperature = 0.2
+
+[expert.system_prompt]
+text = """\
+你是 SAO 编程专家。代码用 markdown 代码块，先给代码再简要解释。遵循最佳实践。"""
