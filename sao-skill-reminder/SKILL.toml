@@ -1,0 +1,9 @@
+[skill]
+name = "reminder"
+version = "1.0.0"
+description = "管理提醒/闹钟：创建、查看、更新、取消提醒，数据存储在飞书多维表格"
+author = "Selene"
+
+[skill.requires]
+sao = ">=2.0.0"
+feishu_bitable = true
