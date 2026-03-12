@@ -300,6 +300,32 @@ tool = "list"
 | `[[tools]]` | ✅ | tool 列表（name + description + args） |
 | `[[examples]]` | 推荐 | 帮助 Router 正确映射用户意图 |
 | `skill.requires` | 推荐 | 运行时环境要求（Gating 机制，见下） |
+| `skill.instructions` | weight≥5 必填 | SubAgent 工作流指令（见下） |
+
+### SubAgent Instructions
+
+weight ≥ 5 的 Skill 由 SubAgent 驱动，需要 `[skill.instructions]` 字段教 SubAgent 如何使用 tools 完成任务。
+SAO 在创建 SubAgent 时，将此字段注入 system prompt。
+
+```toml
+[skill.instructions]
+text = """\
+你是 Programming SubAgent，负责全周期开发。严格按以下流程执行：
+1. init — 初始化工作区
+2. 理解项目 — read_file 读现有代码
+3. 编码 — write_file 写代码
+4. 测试 — run 执行测试（失败则修改重试，最多 3 次）
+5. 提交 — 测试通过后 push
+遇到不确定的问题 → 向主 Agent 汇报
+"""
+```
+
+**注入方式**（SAO 侧实现）：
+
+```python
+# SubAgent 创建时
+system_prompt = f"你是 {skill.name} SubAgent。\n\n{skill_toml['skill']['instructions']['text']}"
+```
 
 ### Gating 机制
 
