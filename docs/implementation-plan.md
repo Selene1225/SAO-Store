@@ -75,7 +75,7 @@ features = ["dashscope_search"]  # 天气依赖联网搜索
 
 ---
 
-### T3: Token 预算友好 — 精简 description 和 examples（P2）
+### T3: Token 预算友好 — 精简 description 和 examples（P2） ✅ 已完成
 
 审查所有 Skill/Expert 的 description 和 examples，确保精简、不浪费 Router prompt token。
 
@@ -121,5 +121,5 @@ skills/sao-skill-self-improve/
 |---|------|--------|--------|------|
 | T1 | SKILL.toml gating 字段 | **P0** | 0.5h | ✅ 已完成 |
 | T2 | Expert TOML gating 字段 | **P1** | 0.5h | ✅ 已完成 |
-| T3 | Token 预算精简 | **P2** | 1h | 无 |
+| T3 | Token 预算精简 | **P2** | 1h | ✅ 已完成 |
 | T4 | self-improve Skill | **P2** | 3-4d | SAO Phase 6 Memory |

@@ -1,7 +1,7 @@
 [expert]
 name = "search"
 version = "1.0.0"
-description = "搜索专家 — 覆盖新闻、实时信息、股价、热搜等需联网的查询"
+description = "搜索专家 — 新闻、实时信息、股价等联网查询"
 search = true
 temperature = 0.5
 

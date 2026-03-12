@@ -1,7 +1,7 @@
 [expert]
 name = "general"
 version = "1.0.0"
-description = "通用助理（默认）— 覆盖闲聊、知识问答、帮助说明、无法归类的请求"
+description = "通用助理（默认）— 闲聊、知识问答、无法归类的请求"
 search = false
 temperature = 0.7
 
