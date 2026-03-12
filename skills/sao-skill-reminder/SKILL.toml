@@ -3,7 +3,80 @@ name = "reminder"
 version = "1.0.0"
 description = "管理提醒/闹钟：创建、查看、更新、取消提醒，数据存储在飞书多维表格"
 author = "Selene"
+weight = 1                     # 1~10 数值，越大越重。SAO 据此决定主 Agent 直调还是派 SubAgent
+                               # 1~3: 轻量，主 Agent 同步直调（秒级，单次调用）
+                               # 4~6: 中等，视情况决定
+                               # 7~10: 重量，SubAgent 异步盯着（分钟~小时级，多轮交互）
 
 [skill.requires]
 sao = ">=2.0.0"
 feishu_bitable = true
+
+# ── Tools 定义（SAO 读取后注入 Router prompt）──
+
+[[tools]]
+name = "set"
+description = "创建新提醒/闹钟"
+
+[tools.args.content]
+type = "string"
+required = true
+description = "提醒内容"
+
+[tools.args.remind_time]
+type = "string"
+required = true
+description = "提醒时间，格式 YYYY-MM-DD HH:mm"
+
+[[tools]]
+name = "list"
+description = "查看当前待执行的提醒列表"
+
+[[tools]]
+name = "update"
+description = "更新已有提醒的内容或时间"
+
+[tools.args.keyword]
+type = "string"
+required = true
+description = "匹配要更新的提醒的关键词"
+
+[tools.args.new_content]
+type = "string"
+required = false
+description = "新的提醒内容（不改则不传）"
+
+[tools.args.new_time]
+type = "string"
+required = false
+description = "新的提醒时间，格式 YYYY-MM-DD HH:mm（不改则不传）"
+
+[[tools]]
+name = "cancel"
+description = "取消一个待执行的提醒"
+
+[tools.args.keyword]
+type = "string"
+required = true
+description = "匹配要取消的提醒的关键词"
+
+# ── 示例（帮助 Router 理解意图）──
+
+[[examples]]
+user = "3月10号下午3点提醒我开会"
+tool = "set"
+args = { content = "开会", remind_time = "2026-03-10 15:00" }
+
+[[examples]]
+user = "查看我的提醒"
+tool = "list"
+
+[[examples]]
+user = "把开会那个提醒改成8点"
+tool = "update"
+args = { keyword = "开会", new_time = "2026-03-10 08:00" }
+
+[[examples]]
+user = "取消开会的提醒"
+tool = "cancel"
+args = { keyword = "开会" }

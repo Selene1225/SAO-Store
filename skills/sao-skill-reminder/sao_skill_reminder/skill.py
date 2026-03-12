@@ -64,74 +64,16 @@ class ReminderSkill(BaseSkill):
     name = "reminder"
     description = "管理提醒/闹钟：创建、查看、更新、取消提醒，数据存储在飞书多维表格"
 
-    def __init__(self, lark_client: lark.Client) -> None:
+    def __init__(self, ctx: SkillContext) -> None:
+        """统一构造函数：所有 Skill 接收 SkillContext，从中获取所需资源。"""
         settings = get_settings()
-        self._client = lark_client
+        self._client = ctx.lark_client
         self._app_token = settings.feishu_bitable_app_token
         self._table_id = settings.feishu_bitable_reminder_table_id
 
-    # ── 技能定义（Router 注入） ────────────────────────
-
-    def get_definition(self) -> dict:
-        return {
-            "name": self.name,
-            "description": self.description,
-            "tools": [
-                {
-                    "name": "set",
-                    "description": "创建新提醒/闹钟",
-                    "args": {
-                        "content": {
-                            "type": "string",
-                            "required": True,
-                            "description": "提醒内容",
-                        },
-                        "remind_time": {
-                            "type": "string",
-                            "required": True,
-                            "description": "提醒时间，格式 YYYY-MM-DD HH:mm",
-                        },
-                    },
-                },
-                {
-                    "name": "list",
-                    "description": "查看当前待执行的提醒列表",
-                    "args": {},
-                },
-                {
-                    "name": "update",
-                    "description": "更新已有提醒的内容或时间",
-                    "args": {
-                        "keyword": {
-                            "type": "string",
-                            "required": True,
-                            "description": "匹配要更新的提醒的关键词",
-                        },
-                        "new_content": {
-                            "type": "string",
-                            "description": "新的提醒内容（不改则不传）",
-                        },
-                        "new_time": {
-                            "type": "string",
-                            "description": "新的提醒时间，格式 YYYY-MM-DD HH:mm（不改则不传）",
-                        },
-                    },
-                },
-                {
-                    "name": "cancel",
-                    "description": "取消一个待执行的提醒",
-                    "args": {
-                        "keyword": {
-                            "type": "string",
-                            "required": True,
-                            "description": "匹配要取消的提醒的关键词",
-                        },
-                    },
-                },
-            ],
-        }
-
     # ── 技能入口 ───────────────────────────────────────
+    # Tools 定义已移至 SKILL.toml，SAO 读取 TOML 注入 Router prompt。
+    # Skill 只需实现 execute()。
 
     async def execute(self, tool: str, args: dict[str, Any], ctx: SkillContext) -> str | None:
         handlers = {

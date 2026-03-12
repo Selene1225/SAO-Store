@@ -53,10 +53,11 @@ cp experts/weather.toml ~/.sao/experts/
 
 1. 在 `skills/` 下创建 `sao-skill-{name}/`
 2. 继承 `sao.skills.BaseSkill`
-3. 实现 `get_definition()` 和 `execute()` 方法
-4. 添加 `pyproject.toml` + `SKILL.toml`
-5. `pip install -e skills/sao-skill-{name}/` 本地测试
-6. Push 到 GitHub 共享
+3. 实现 `__init__(self, ctx: SkillContext)` 和 `execute(tool, args, ctx)` 方法
+4. 在 `SKILL.toml` 中声明 `[[tools]]`、`[[examples]]`、`weight`
+5. 添加 `pyproject.toml`（含 `[project.entry-points."sao.skills"]`）
+6. `pip install -e skills/sao-skill-{name}/` 本地测试
+7. Push 到 GitHub 共享
 
 ## 开发新专家
 
