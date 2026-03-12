@@ -5,6 +5,9 @@ description = "天气查询专家 — 覆盖天气、气温、降雨、空气质
 search = true
 temperature = 0.3
 
+[expert.requires]
+features = ["dashscope_search"]      # 天气查询依赖联网搜索
+
 [expert.system_prompt]
 text = """\
 你是 SAO 天气专家。根据搜索结果回复天气，严格使用以下卡片格式，缺失字段可省略，不编造：

@@ -253,9 +253,11 @@ weight = 1                           # 1~10 数值，越大越重
                                      # 4~6: 中等，视情况决定
                                      # 7~10: 重量，SubAgent 异步盯着
 
-[skill.requires]                     # 运行时依赖声明 (可选)
+[skill.requires]                     # 运行时依赖声明
 sao = ">=2.0.0"
-feishu_bitable = true
+env = ["FEISHU_BITABLE_APP_TOKEN"]   # 必需环境变量（SAO 加载时检查）
+bins = []                            # 必需的外部命令（PATH 上）
+features = ["feishu"]                # SAO 功能开关（对应 config.toml [features]）
 
 # ── Tools 定义 ──
 [[tools]]
@@ -297,7 +299,20 @@ tool = "list"
 | `skill.description` | ✅ | 注入 Router prompt 的描述 |
 | `[[tools]]` | ✅ | tool 列表（name + description + args） |
 | `[[examples]]` | 推荐 | 帮助 Router 正确映射用户意图 |
-| `skill.requires` | 可选 | 运行时环境要求 |
+| `skill.requires` | 推荐 | 运行时环境要求（Gating 机制，见下） |
+
+### Gating 机制
+
+SAO 加载 Skill 时检查 `[skill.requires]`，不满足则跳过（不注入 Router prompt、不实例化）：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `requires.env` | 字符串数组 | 必须存在的环境变量名 |
+| `requires.bins` | 字符串数组 | PATH 上必须有的命令 |
+| `requires.features` | 字符串数组 | `~/.sao/config.toml` 中的功能开关 |
+| `requires.sao` | 版本约束 | SAO 最低版本 |
+
+跳过时 SAO 会输出 warning 日志，不影响其他 Skill 加载。
 
 ---
 
@@ -310,6 +325,9 @@ version = "1.0.0"
 description = "天气查询专家"               # 人类可读描述
 search = true                             # 是否让 LLM 开启联网搜索
 temperature = 0.3                         # LLM 温度
+
+[expert.requires]                          # 可选 — 运行时依赖声明
+features = ["dashscope_search"]            # 需要开启的 SAO 功能开关
 
 [expert.system_prompt]
 text = """\
@@ -325,6 +343,25 @@ text = """\
 | `expert.search` | ✅ | `true` 开启 DashScope 联网搜索 |
 | `expert.temperature` | ✅ | 事实型低 (0.2~0.3)，创意型高 (0.7~0.9) |
 | `expert.system_prompt.text` | ✅ | 专属 System Prompt，专注领域行为和格式 |
+| `expert.requires` | 可选 | 运行时环境要求（Gating 机制，见下） |
+
+### Expert Gating 机制
+
+SAO 加载 Expert 时可检查 `[expert.requires]`，不满足则跳过：
+
+```toml
+[expert.requires]
+features = ["dashscope_search"]    # 需要开启的 SAO 功能开关
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `requires.features` | 字符串数组 | `~/.sao/config.toml` 中的功能开关 |
+
+> Expert 的 Gating 比 Skill 更轻量 — 通常只需 `features`（如联网搜索依赖）。
+> 环境变量和二进制依赖一般不适用于 Expert（纯 prompt，无代码执行）。
+
+跳过时 SAO 输出 warning 日志，fallback 到 `general` Expert。
 
 ---
 
@@ -588,3 +625,18 @@ text = """\
 | code | Expert | ✅ 已实现 | `experts/code.toml` |
 | search | Expert | ✅ 已实现 | `experts/search.toml` |
 | translate | Expert | ✅ 已实现 | `experts/translate.toml` |
+
+---
+
+## 附录: SAO 侧运行时改进
+
+以下能力需要 SAO 主仓库实现，完整设计见 `docs/sao-runtime-improvements.md`：
+
+| # | 能力 | 说明 | SAO-Store 配合 |
+|---|------|------|----------------|
+| 1 | Gating 依赖检查 | 加载时检查 `requires.env` / `bins` / `features` | SKILL.toml 声明依赖 |
+| 2 | Token 预算感知 | Router prompt 技能描述 token 上限控制 | 精简 description/examples |
+| 3 | 三级优先级覆盖 | `~/.sao/skills/` > pip > 内置 | 无（纯 SAO 侧） |
+| 4 | 热重载 | 文件变更自动刷新 Skill/Expert | 无（纯 SAO 侧） |
+| 5 | 集中配置覆盖 | `~/.sao/config.toml` per-skill enable/env | 无（纯 SAO 侧） |
+| 6 | 自我改进框架 | 学习日志 → 规则提升 | 开发 self-improve Skill |

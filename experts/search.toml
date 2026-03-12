@@ -5,6 +5,9 @@ description = "搜索专家 — 覆盖新闻、实时信息、股价、热搜等
 search = true
 temperature = 0.5
 
+[expert.requires]
+features = ["dashscope_search"]      # 搜索依赖联网搜索
+
 [expert.system_prompt]
 text = """\
 你是 SAO 搜索专家。根据搜索结果回答，标注信息来源和时间。区分事实和观点，承认信息有时效性。"""
