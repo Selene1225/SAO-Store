@@ -61,10 +61,36 @@ cp experts/weather.toml ~/.sao/experts/
 1. 在 `skills/` 下创建 `sao-skill-{name}/`
 2. 继承 `sao.skills.BaseSkill`
 3. 实现 `__init__(self, ctx: SkillContext)` 和 `execute(tool, args, ctx)` 方法
-4. 在 `SKILL.toml` 中声明 `[[tools]]`、`[[examples]]`、`weight`
+4. 在 `SKILL.toml` 中声明 `[[tools]]`、`[[examples]]`、`weight`、`[skill.requires]`
 5. 添加 `pyproject.toml`（含 `[project.entry-points."sao.skills"]`）
-6. `pip install -e skills/sao-skill-{name}/` 本地测试
-7. Push 到 GitHub 共享
+6. 编写单元测试（`tests/test_skill.py`），**所有测试通过后才能上线**
+7. `pip install -e skills/sao-skill-{name}/` 本地测试
+8. Push 到 GitHub 共享
+
+### 测试标准（必须）
+
+每个 Skill 必须包含 `tests/test_skill.py`，覆盖以下内容：
+
+| 测试类型 | 说明 |
+|----------|------|
+| **参数校验** | 每个 tool 的缺参/空参/非法参数分支 |
+| **路由分发** | `execute()` 能正确路由到所有 tool + 未知 tool 返回警告 |
+| **核心逻辑** | 纯函数/工具方法的单元测试（不依赖外部服务） |
+| **成功路径** | mock 外部依赖后，验证正常执行返回正确结果 |
+| **安全防护** | 路径穿越、危险命令等安全机制（如适用） |
+
+运行测试：
+
+```bash
+# 单个 Skill
+python -m pytest skills/sao-skill-{name}/tests/ -v
+
+# 全部 Skill
+python -m pytest skills/*/tests/ -v
+```
+
+外部依赖（SAO 主包、飞书 SDK 等）通过 `sys.modules` mock 处理，
+无需安装即可运行测试。详见已有测试代码。
 
 ## 开发新专家
 

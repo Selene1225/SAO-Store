@@ -14,8 +14,17 @@ dependencies = [
     "super-agent-os>=2.0.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+]
+
 [project.entry-points."sao.skills"]
 programming = "sao_skill_programming:ProgrammingSkill"
 
 [tool.setuptools.packages.find]
 include = ["sao_skill_programming*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
