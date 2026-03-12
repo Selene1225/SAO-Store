@@ -1,29 +1,40 @@
 # SAO v2 技能规划
 
-> 最后更新: 2026-03-11 | 技能系统状态: **Phase 1.5 Reminder 已实现，天气已走 Chat Expert，Programming Skill 设计完成**
+> 最后更新: 2026-03-12 | 技能系统状态: **Phase 1.5 完成（含 StoreManager），三层架构 CEO→SubAgent→Skill 设计完成**
 >
 > v2 采用 **双轨技能系统**：TOML 声明式 + Python 代码。
 > TOML/Forge/市场技能运行在 Docker 沙箱中；Programming Skill 不用容器，通过 Git 分支隔离 + Rules 行为约束 + SAO 审查保证安全（详见 `docs/programming-skill.md` §12）。
 > 天气查询已通过 **Chat Expert** 模式实现（DashScope 联网搜索，详见 `docs/experts.md`）。
->
-> **关键设计**：Skill 在 SKILL.toml 中声明数值 `weight`（1~10，根据预估耗时和流程复杂度设定），SAO 据此决定是主 Agent 直调还是分配 SubAgent 盯着执行。
-> 1~3 轻量（秒级、单次调用）；4~6 中等；7~10 重量（分钟~小时级、多轮交互）。
-> 详见 `docs/programming-skill.md` §6.6。
->
+> **Skill 调度策略由 SKILL.toml 中的 `weight` 字段决定**：轻量 (1~3) CEO 同步直调，重量 (>=5) SubAgent 异步盯着。
 > 本文档记录所有规划中的技能、实现计划和优先级。
 
 ---
 
 ## 技能总览
 
-| # | 技能名 | 类型 | weight | 优先级 | 计划阶段 | 状态 | 说明 |
-|---|---|---|---|---|---|---|---|
-| 1 | `weather` | Chat Expert | — | P0 | Phase 1.5 | ✅ 已实现 | 天气查询（DashScope 联网搜索 + 专属 Prompt） |
-| 2 | `reminder` | Python 代码 | **1** | P0 | Phase 1.5 | ✅ 已实现 | 定时提醒（Bitable 存储，主 Agent 直调） |
-| 3 | `programming` | Python 代码 | **9** | P0 | Phase A~C | ✅ 设计完成 | 编排本地 IDE Agent 编程（SubAgent 盯着执行） |
-| 4 | `forge` | 内置 (硬编码) | **8** | P0 | Phase 4 | 待开发 | 技能锻造（Agent 自写技能） |
-| 5 | `store_manager` | 内置 (硬编码) | **2** | P1 | Phase 1.5 | 待开发 | 组件商店管理（搜索/安装/卸载/更新/列表） |
-| 6 | `stock_monitor` | Python 代码 | **1** | P2 | Phase 4+ | 示例 | A 股股息率监控（Forge 生成示例） |
+| # | 技能名 | 类型 | Weight | 调度方式 | 优先级 | 计划阶段 | 状态 | 说明 |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `weather` | Chat Expert | — | CEO 直接调用 LLM | P0 | Phase 1.5 | ✅ 已实现 | 天气查询（DashScope 联网搜索 + 专属 Prompt） |
+| 2 | `reminder` | Python (SAO-Store) | 1 | CEO 轻量直调 | P0 | Phase 1.5 | ✅ 已实现 | 定时提醒（Bitable 存储，set/list/update/cancel） |
+| 3 | `programming` | Python (SAO-Store) | 8 | SubAgent 委派 | P0 | Phase A~C | ✅ 设计完成 | 编排本地 IDE Agent 编程（详见 `docs/programming-skill.md`） |
+| 4 | `forge` | 内置 (SAO) | 7 | SubAgent 委派 | P0 | Phase 4 | 待开发 | 技能锻造（Agent 自写技能） |
+| 5 | `store_manager` | 内置 (SAO) | 1 | CEO 轻量直调 | P1 | Phase 1.5 | ✅ 已实现 | 组件商店管理（搜索/安装/卸载/更新/列表） |
+| 6 | `stock_monitor` | Python (SAO-Store) | 5 | 视情况 | P2 | Phase 4+ | 示例 | A 股股息率监控（Forge 生成示例） |
+| 7 | `browser` | Python (SAO-Store) | 2 | CEO 轻量直调 | **P1** | Phase 2+ | 待开发 | Playwright 浏览器自动化（导航/点击/截图/Cookie 持久化） |
+| 8 | `xiaohongshu` | Python (SAO-Store) | 3 | CEO 轻量直调 | P2 | Phase 3+ | 待开发 | 小红书运营（找对标/做帖子/分析评论/数据看板），依赖 `browser` |
+
+### Weight 调度分类说明
+
+SKILL.toml 中的 `weight` 字段（1~10）决定技能的调度策略：
+
+| 分类 | Weight | 调度方式 | 说明 |
+|------|--------|----------|------|
+| 轻量 | 1~3 | CEO(主Agent) **同步直调** `skill.execute()` | 毫秒级返回，CEO 不被占用 |
+| 中等 | 4~6 | 视具体情况决定 | 可能直调或委派 |
+| 重量 | 7~10 | **SubAgent 异步盯着** | CEO 立即释放，完成后飞书通知 |
+
+> 阈值: `SUBAGENT_THRESHOLD = 5`，`weight >= 5` 走 SubAgent 委派。
+> Expert 没有 weight（它们只是 LLM 参数配置，CEO 直接调用 LLM 即可）。
 
 ### 内置工具（非技能，Agent 直接调用）
 
@@ -303,12 +314,9 @@ StoreManager.execute("install", {"query": "提醒"})
 # 本地: C:\Users\yiliu4\code\SAO-Store
 SAO-Store/
 ├── skills/                    # ── 技能（pip 包）──
-│   ├── sao-skill-reminder/    # 每个技能一个子目录
-│   │   ├── SKILL.toml
-│   │   ├── pyproject.toml     # pip install -e skills/sao-skill-reminder/
-│   │   └── sao_skill_reminder/
-│   │       ├── __init__.py
-│   │       └── skill.py
+│   ├── sao-skill-reminder/    # ✅ 已实现
+│   ├── sao-skill-programming/ # ✅ 已实现
+│   ├── sao-skill-browser/     # 待开发 (Phase 2+)
 │   └── sao-skill-{name}/      # 后续新增技能
 └── experts/                   # ── 专家（TOML 配置）──
     ├── weather.toml
@@ -359,6 +367,117 @@ SAO:  ✅ 后台任务完成 (task-id: abc123)
 | 快递查询 | `开发一个查快递的功能` | 调用快递100 API |
 | 汇率换算 | `帮我写个汇率查询` | 实时汇率 API |
 | 新闻摘要 | `创建一个新闻摘要技能` | 抓取+LLM 总结 |
+
+---
+
+## 6. BrowserSkill — 浏览器自动化
+
+> Phase 2+ | Python 代码技能 | Playwright Python 库 | **小红书等场景的基础依赖**
+
+| 字段 | 值 |
+|---|---|
+| 名称 | `browser` |
+| 类型 | Python 代码 (`SKILL.toml` + Playwright 封装) |
+| Weight | 2（轻量，CEO 直调） |
+| 优先级 | **P1** — 小红书运营、网页摘要等场景的前置依赖 |
+
+### 核心能力
+
+| Tool | 说明 |
+|---|---|
+| `navigate` | 打开 URL，返回页面内容/截图 |
+| `click` | 按选择器点击元素 |
+| `fill` | 填写表单字段 |
+| `screenshot` | 网页截图（全页或元素） |
+| `get_content` | 提取页面文本/结构化数据 |
+| `login_state` | Cookie 持久化（保存/恢复登录态到 `~/.sao/browser/cookies/`） |
+
+### 技术选型
+
+| 方案 | 评估 | 结论 |
+|---|---|---|
+| `playwright` Python 库 | 微软维护，成熟稳定，Python 原生 | ✅ **推荐** |
+| playwright-mcp (Node.js) | 需要 npx + Node.js，多一层依赖 | ❌ 不适合 |
+| agent-browser (Rust CLI) | Vercel 维护，ref 模型好，但要 Node.js | ⚠️ 备选 |
+| xiaohongshu-mcp (Go 二进制) | 闭源 + 账号安全风险 | ⛔ 不使用 |
+
+### 设计要点
+
+- **Cookie 持久化**：登录态保存在 `~/.sao/browser/cookies/{domain}.json`，避免每次重新登录
+- **无头模式默认**：headless=True，服务器环境可运行
+- **域名白名单**：可在 `~/.sao/config.toml` 配置允许访问的域名
+- **SAO-Store 位置**：`SAO-Store/skills/sao-skill-browser/`
+
+---
+
+## 7. XiaohongshuSkill — 小红书运营
+
+> Phase 3+ | Python 代码技能 | 依赖 BrowserSkill | **持续运营项目（需项目级长期记忆）**
+
+| 字段 | 值 |
+|---|---|
+| 名称 | `xiaohongshu` |
+| 类型 | Python 代码 (`SKILL.toml` + Playwright 自动化) |
+| Weight | 3（轻量，主要是数据采集 + LLM 分析） |
+| 优先级 | P2 |
+| 依赖 | `browser` Skill + Phase 3 长期记忆 |
+
+### Tools
+
+| Tool | 说明 |
+|---|---|
+| `find_benchmark` | 搜索对标账号（关键词搜索 + 分析粉丝数/互动率/内容风格） |
+| `create_post` | 生成帖子文案（LLM 基于对标策略 + 用户要求生成） |
+| `publish_post` | 发布帖子（Playwright 自动化填写+上传+发布） |
+| `get_comments` | 抓取指定帖子评论 + LLM 分析情感/主题 |
+| `get_analytics` | 抓取账号数据（阅读/点赞/收藏/评论趋势） |
+| `suggest_strategy` | 基于历史数据 + 对标分析，LLM 建议内容方向 |
+
+### 项目级长期记忆
+
+小红书运营是**持续项目**，跨会话上下文是核心需求。
+通过 SAO 的项目记忆系统 (`SkillContext.project()`) 管理项目状态，详见 `docs/memory-sdk.md`。
+
+```
+~/.sao/projects/xiaohongshu/
+├── state.toml              # 账号信息、对标策略、风格定位
+├── posts/                  # 已发帖子记录
+│   └── 2026-03-10.toml     # 标题、数据、评论摘要
+└── analytics/              # 数据快照
+    └── 2026-03-10.json     # 每日数据采集
+```
+
+### 安全考虑
+
+| 风险 | 缓解措施 |
+|---|---|
+| 账号被封 | 限制操作频率（发帖间隔 ≥ 4 小时），模拟正常人行为 |
+| Cookie 泄露 | `~/.sao/browser/cookies/` 不入 Git，文件权限 600 |
+| 逆向 API 变更 | 不依赖逆向 API，全走官方 Web 界面 Playwright 操作 |
+| 内容审核 | 发帖前 LLM 自检敏感内容，需用户确认后才发布 |
+
+### 使用示例
+
+```
+[飞书] 帮我分析这几个小红书对标账号：xxx、yyy、zzz
+[SAO]  📊 对标分析完成：
+       • xxx: 5.2w 粉，日更，知识分享型...
+       • yyy: 3.8w 粉，周更3篇，生活方式...
+       建议定位: 知识分享 + 轻松语气，周更 3-4 篇
+       (已保存到项目记忆)
+
+[飞书] 根据定位帮我写一篇关于 AI 效率的帖子
+[SAO]  📝 文案已生成：
+       标题: "用 AI 把工作效率提升 3 倍的 5 个技巧"
+       正文: (600字)...
+       [✅ 发布] [✏️ 修改] [❌ 放弃]
+
+[飞书] 上周发的帖子数据怎么样
+[SAO]  📈 上周数据汇总：
+       • 3/5 "AI效率": 👁 1.2k | ❤️ 86 | ⭐ 45 | 💬 12
+       • 3/7 "工具推荐": 👁 890 | ❤️ 52 | ⭐ 28 | 💬 8
+       趋势: 阅读量 +15%，AI 话题互动率最高
+```
 
 ---
 
@@ -520,7 +639,8 @@ SAO:  ✅ 后台任务完成 (task-id: abc123)
 > |---|---|---|
 > | 自我改进 | self-improving-agent | Phase 3 长期记忆 + 学习日志 |
 > | 多模态摘要 | summarize | Qwen 原生实现 |
-> | 浏览器自动化 | playwright / agent-browser | playwright Python 库 |
+> | 浏览器自动化 | playwright / agent-browser | **playwright Python 库**（Phase 2+，小红书等场景前置）→ §6 BrowserSkill |
+> | 小红书运营 | xiaohongshu-mcp (⛔ 不用) | **自建 Skill + Playwright**（Phase 3+，需长期记忆）→ §7 XiaohongshuSkill |
 > | 插件安全审查 | skill-vetter | Marketplace 安全模块 |
 > | 定时主动任务 | proactive-agent | Phase 5 后台任务 + Cron |
 
@@ -598,14 +718,10 @@ Skill Registry            查找 SkillManifest → 读取 weight (1~10)
 # 本地路径: C:\Users\yiliu4\code\SAO-Store
 SAO-Store/
 ├── skills/                    # ── 技能（pip 包）──
-│   ├── sao-skill-reminder/    # pip install -e skills/sao-skill-reminder/
-│   │   ├── SKILL.toml
-│   │   ├── pyproject.toml
-│   │   └── sao_skill_reminder/
-│   │       ├── __init__.py
-│   │       └── skill.py
+│   ├── sao-skill-reminder/    # ✅ 已实现
+│   ├── sao-skill-programming/ # ✅ 已实现
+│   ├── sao-skill-browser/     # 待开发 (Phase 2+)
 │   └── sao-skill-{name}/      # 后续新增技能
-│       └── ...
 └── experts/                   # ── 专家（TOML 配置）──
     ├── weather.toml
     ├── search.toml
