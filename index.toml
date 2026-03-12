@@ -1,0 +1,78 @@
+# SAO-Store Component Index (auto-generated)
+# Rebuild: python -m sao_store_index rebuild
+
+[meta]
+version = "1.0.0"
+updated = "2026-03-12"
+skill_count = 3
+expert_count = 5
+
+[[skills]]
+name = "dice"
+version = "1.0.0"
+description = "掷骰子、抛硬币、随机抽选"
+keywords = ["骰子", "掷骰", "抛硬币", "随机选择", "扊骰", "扊色", "扞骰", "扞色", "色子", "扊色子", "扞色子", "抛币", "dice", "roll", "flip", "coin", "random", "pick", "抽签", "抽选"]
+aliases = []
+path = "skills/sao-skill-dice"
+weight = 1
+tools = ["roll", "flip", "pick"]
+
+[[skills]]
+name = "programming"
+version = "1.0.0"
+description = "全周期开发：需求解析→编码→测试→上线，遇阻汇报"
+keywords = ["编程", "开发", "写代码", "coding", "programming", "编码", "测试", "部署", "git", "写程序"]
+aliases = []
+path = "skills/sao-skill-programming"
+weight = 8
+tools = ["init", "write_file", "read_file", "run", "push"]
+
+[[skills]]
+name = "reminder"
+version = "1.0.0"
+description = "管理提醒/闹钟：创建、查看、更新、取消"
+keywords = ["提醒", "闹钟", "定时", "reminder", "alarm", "提醒我", "别忘了", "到点"]
+aliases = []
+path = "skills/sao-skill-reminder"
+weight = 1
+tools = ["set", "list", "update", "cancel"]
+
+[[experts]]
+name = "code"
+version = "1.0.0"
+description = "编程专家 — 覆盖代码生成、debug、解释、重构"
+keywords = ["代码", "编程", "code", "debug", "bug", "重构", "解释代码", "写代码", "python", "java"]
+aliases = []
+path = "experts/code.toml"
+
+[[experts]]
+name = "general"
+version = "1.0.0"
+description = "通用助理（默认）— 闲聊、知识问答、无法归类的请求"
+keywords = ["聊天", "问答", "chat", "general", "你好", "帮我", "知识", "百科"]
+aliases = []
+path = "experts/general.toml"
+
+[[experts]]
+name = "search"
+version = "1.0.0"
+description = "搜索专家 — 新闻、实时信息、股价等联网查询"
+keywords = ["搜索", "查询", "新闻", "search", "股价", "热点", "最新", "今天", "实时"]
+aliases = []
+path = "experts/search.toml"
+
+[[experts]]
+name = "translate"
+version = "1.0.0"
+description = "翻译专家 — 覆盖中英互译、多语言翻译"
+keywords = ["翻译", "translate", "中英", "英文", "日语", "韩语", "法语", "怎么说", "什么意思"]
+aliases = []
+path = "experts/translate.toml"
+
+[[experts]]
+name = "weather"
+version = "1.0.0"
+description = "天气查询专家 — 覆盖天气、气温、降雨、空气质量"
+keywords = ["天气", "气温", "降雨", "下雨", "weather", "温度", "空气质量", "穿什么", "带伞"]
+aliases = []
+path = "experts/weather.toml"
