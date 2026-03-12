@@ -1,0 +1,98 @@
+[skill]
+name = "programming"
+version = "1.0.0"
+description = "全周期开发：需求解析→编码→测试→上线，遇阻汇报"
+author = "Selene"
+weight = 8                     # 重量级 — SubAgent 异步管理多轮开发循环
+                               # SubAgent 循环: init → write → run(test) → fix → push
+                               # 遇到不确定问题时通过 report 向主 Agent 汇报
+
+[skill.requires]
+sao = ">=2.0.0"
+env = []                             # 无固定环境变量（repo URL 由用户提供）
+bins = ["git"]                       # 需要 git 执行版本管理
+features = []                        # 无特殊功能依赖
+
+# ── Tools 定义 ──
+
+[[tools]]
+name = "init"
+description = "初始化工作区：clone 仓库或创建空目录"
+
+[tools.args.repo_url]
+type = "string"
+required = false
+description = "Git 仓库地址（留空则创建空目录）"
+
+[tools.args.branch]
+type = "string"
+required = false
+description = "分支名（默认 main）"
+
+[[tools]]
+name = "write_file"
+description = "创建或覆盖工作区中的文件"
+
+[tools.args.path]
+type = "string"
+required = true
+description = "文件相对路径"
+
+[tools.args.content]
+type = "string"
+required = true
+description = "文件内容"
+
+[[tools]]
+name = "read_file"
+description = "读取工作区中的文件内容"
+
+[tools.args.path]
+type = "string"
+required = true
+description = "文件相对路径"
+
+[[tools]]
+name = "run"
+description = "在工作区执行 shell 命令（测试/构建/lint）"
+
+[tools.args.command]
+type = "string"
+required = true
+description = "要执行的命令"
+
+[tools.args.timeout]
+type = "integer"
+required = false
+description = "超时秒数（默认 120）"
+
+[[tools]]
+name = "push"
+description = "提交并推送代码到远程仓库"
+
+[tools.args.message]
+type = "string"
+required = true
+description = "commit message"
+
+[tools.args.branch]
+type = "string"
+required = false
+description = "推送分支（默认当前分支）"
+
+# ── 示例 ──
+
+[[examples]]
+user = "帮我写一个 Python Flask API，有用户注册和登录接口"
+tool = "init"
+args = { repo_url = "" }
+
+[[examples]]
+user = "把我的 github.com/user/repo 项目加个单元测试"
+tool = "init"
+args = { repo_url = "https://github.com/user/repo.git" }
+
+[[examples]]
+user = "运行一下测试看看有没有问题"
+tool = "run"
+args = { command = "pytest -v" }

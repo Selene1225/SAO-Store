@@ -16,6 +16,7 @@
 | translate Expert | TOML 配置 | ✅ 已实现 | `experts/translate.toml` |
 | search Expert | TOML 配置 | ✅ 已实现 | `experts/search.toml` |
 | Reminder Skill | Python 代码 | ✅ 已实现 | `skills/sao-skill-reminder/` |
+| Programming Skill | Python 代码 | ✅ 已实现 | `skills/sao-skill-programming/` |
 
 ---
 

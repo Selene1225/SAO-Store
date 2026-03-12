@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sao-skill-programming"
+version = "1.0.0"
+description = "SAO 编程技能 — 全周期开发：编码、测试、上线"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Selene" }]
+
+dependencies = [
+    "super-agent-os>=2.0.0",
+]
+
+[project.entry-points."sao.skills"]
+programming = "sao_skill_programming:ProgrammingSkill"
+
+[tool.setuptools.packages.find]
+include = ["sao_skill_programming*"]

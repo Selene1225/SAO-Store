@@ -13,6 +13,12 @@ SAO-Store/
 │   │   └── sao_skill_reminder/
 │   │       ├── __init__.py
 │   │       └── skill.py
+│   ├── sao-skill-programming/    # 编程技能（全周期开发）
+│   │   ├── SKILL.toml
+│   │   ├── pyproject.toml
+│   │   └── sao_skill_programming/
+│   │       ├── __init__.py
+│   │       └── skill.py
 │   └── sao-skill-{name}/        # 后续新增技能
 │       └── ...
 ├── experts/                      # ── 专家（TOML 配置）──
@@ -36,6 +42,7 @@ SAO-Store/
 ```bash
 # 开发模式安装（本地修改即时生效）
 pip install -e skills/sao-skill-reminder/
+pip install -e skills/sao-skill-programming/
 
 # 从 GitHub 安装
 pip install "sao-skill-reminder @ git+https://github.com/Selene1225/SAO-Store.git#subdirectory=skills/sao-skill-reminder"
