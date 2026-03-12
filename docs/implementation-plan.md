@@ -116,6 +116,47 @@ skills/sao-skill-self-improve/
 
 ---
 
+### T5: Classlog Skill — 兴趣班课时管理（待 Memory 系统）
+
+开发 `sao-skill-classlog`，记录娃上兴趣班的课时包、上课记录，查询剩余课时并对账。
+
+```
+skills/sao-skill-classlog/
+├── SKILL.toml              # weight=1（轻量，主 Agent 直调）
+├── pyproject.toml
+└── sao_skill_classlog/
+    ├── __init__.py
+    └── skill.py            # tools: log / buy / balance / history / rotate
+```
+
+**设计要点**（已定稿）：
+| 项目 | 决定 |
+|---|---|
+| 存储 | 飞书多维表格，独立 app_token（`FEISHU_BITABLE_CLASSLOG_APP_TOKEN`） |
+| table_id | 不存储，每次 list tables 按名称查，找不到自动创建 |
+| 课时包表 | `课时包`，永久不轮换，每次续费一行 |
+| 上课记录表 | `上课记录_2026上` / `上课记录_2026下`，按学期轮换 |
+| 学期规则 | 1-6月=上，7-12月=下 |
+| 请假 | 不扣课时 |
+| balance | 展示剩余/总购/已上，不展示金额 |
+
+**tools**：
+| tool | 说明 |
+|---|---|
+| `log` | 记录一次上课（自动创建当前学期表） |
+| `buy` | 记录购买/续费课时包（自动创建课时包表） |
+| `balance` | 查询课程剩余课时 |
+| `history` | 按课程/月份查上课记录（对账用） |
+| `rotate` | 归档当前学期 → 汇总回写课时包 → 创建新学期表 |
+
+**依赖**: SAO 主仓库的 Memory 系统（用于缓存 table_id，可选优化）+ 飞书 Bitable API 建表能力。
+
+**阻塞原因**: 创建多维表格后的 app_token 需要持久化存储，等 Memory 系统就绪后可自动管理。
+
+预估：2-3 天。
+
+---
+
 ### SAO-Store 待办优先级总结
 
 | # | 任务 | 优先级 | 工作量 | 依赖 |
@@ -124,3 +165,4 @@ skills/sao-skill-self-improve/
 | T2 | Expert TOML gating 字段 | **P1** | 0.5h | ✅ 已完成 |
 | T3 | Token 预算精简 | **P2** | 1h | ✅ 已完成 |
 | T4 | self-improve Skill | **P2** | 3-4d | SAO Phase 6 Memory |
+| T5 | Classlog Skill（课时管理） | **P1** | 2-3d | SAO Memory 系统 |
