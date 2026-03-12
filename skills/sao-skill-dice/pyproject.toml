@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sao-skill-dice"
+version = "1.0.0"
+description = "掷骰子、抛硬币、随机抽选"
+requires-python = ">=3.11"
+dependencies = [
+    "super-agent-os>=2.0.0",
+]
+
+[project.entry-points."sao.skills"]
+dice = "sao_skill_dice:DiceSkill"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

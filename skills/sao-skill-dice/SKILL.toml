@@ -1,0 +1,62 @@
+[skill]
+name = "dice"
+version = "1.0.0"
+description = "掷骰子、抛硬币、随机抽选"
+weight = 1
+
+[skill.requires]
+sao = ">=2.0.0"
+env = []
+bins = []
+features = []
+
+[[tools]]
+name = "roll"
+description = "掷骰子，支持 NdM 格式（如 2d6 = 掷2个6面骰）"
+
+[[tools.args]]
+name = "notation"
+type = "string"
+description = "骰子表达式，如 1d6、2d20、3d8+5"
+required = false
+
+[[tools]]
+name = "flip"
+description = "抛硬币，返回正面或反面"
+
+[[tools.args]]
+name = "count"
+type = "integer"
+description = "抛几次（默认1次）"
+required = false
+
+[[tools]]
+name = "pick"
+description = "从给定列表中随机抽选一个"
+
+[[tools.args]]
+name = "items"
+type = "string"
+description = "逗号分隔的选项列表，如 '吃火锅,吃烧烤,吃麻辣烫'"
+required = true
+
+[[tools.args]]
+name = "count"
+type = "integer"
+description = "抽选个数（默认1个）"
+required = false
+
+[[examples]]
+user = "掷两个骰子"
+tool = "roll"
+args = { notation = "2d6" }
+
+[[examples]]
+user = "抛个硬币决定一下"
+tool = "flip"
+args = {}
+
+[[examples]]
+user = "帮我从火锅、烧烤、麻辣烫里随机选一个"
+tool = "pick"
+args = { items = "火锅,烧烤,麻辣烫" }
