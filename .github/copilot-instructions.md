@@ -10,6 +10,22 @@ SAO-Store 是 Super-Agent-OS（SAO）的组件仓库，包含两类组件：
 - **Skill**（技能）：Python pip 包，继承 `BaseSkill`，通过 `execute(tool, args, ctx)` 执行具体操作
 - **Expert**（专家）：TOML 配置文件，定义 System Prompt + 搜索开关 + 温度，无代码
 
+## Skill 开发流程（必须按顺序）
+
+每个 Skill 从创建到上线，必须完成以下 **6 步**：
+
+| 步骤 | 操作 | 验收标准 |
+|------|------|----------|
+| 1. 脚手架 | 创建 `skills/sao-skill-{name}/` 目录结构 | 文件结构完整 |
+| 2. 编码 | 实现 `skill.py` + `SKILL.toml` + `pyproject.toml` | 代码规范通过 |
+| 3. 测试 | 编写并运行 `tests/test_skill.py` | 所有测试通过 |
+| 4. 注册索引 | 运行 `python -m sao_store_index rebuild` | `index.toml` 包含新 Skill |
+| 5. 提交 | `git add -A && git commit && git push` | 远程仓库已更新 |
+| 6. 验证搜索 | 运行 `python -m sao_store_index search "{关键词}"` | 能搜到新 Skill |
+
+> **关键**: 步骤 4 和 6 是必须的。新 Skill 如果未注册到 LocalIndex，SAO 将无法通过搜索发现它。
+> 详见 [docs/local-index-guide.md](../docs/local-index-guide.md)
+
 ## Skill 开发规范
 
 ### 文件结构（必须）
@@ -28,11 +44,14 @@ skills/sao-skill-{name}/
 
 ### SKILL.toml 必须包含
 
-- `[skill]`: name, version, description (≤30字), weight (1-10)
+- `[skill]`: name, version, description (≤30字), weight (1-10), **keywords** (逗号分隔的中英文关键词)
 - `[skill.requires]`: sao 版本 + env/bins/features gating 字段
 - `[[tools]]`: 每个 tool 有 name + description + args
 - `[[examples]]`: 至少 2 个，不超过 4 个
 - `[skill.instructions]`: SubAgent 工作流指令（weight ≥ 5 必填）
+
+> **keywords 规范**: 中文高频触发词在前，英文在后，10-20 个词。
+> 例: `keywords = "骰子,掷骰,抛硬币,dice,roll,flip"`
 
 ### Python 代码规范
 
@@ -94,6 +113,7 @@ python -m pytest skills/sao-skill-{name}/tests/ -v
 name = "{name}"                    # Router chat_mode 匹配值
 version = "1.0.0"
 description = "..."                # ≤ 20 字
+keywords = "..."                   # 中英文搜索关键词（必填）
 search = true/false                # 联网搜索
 temperature = 0.3                  # 0.0 ~ 1.0
 
@@ -117,9 +137,41 @@ text = "..."                       # 专注领域行为和格式
 - test: 测试相关
 - docs: 文档
 
+## LocalIndex 索引系统
+
+SAO-Store 使用 `sao_store_index` 包维护一份集中索引 `index.toml`，SAO 通过该索引搜索/发现组件。
+
+### 常用命令
+
+```bash
+# 重建索引（新增/修改 Skill 或 Expert 后必须执行）
+python -m sao_store_index rebuild
+
+# 搜索组件（支持中文关键词 + 模糊匹配）
+python -m sao_store_index search "骰子"
+python -m sao_store_index search "天气" --type expert
+
+# 列出所有组件
+python -m sao_store_index list
+```
+
+### SAO 代码中调用
+
+```python
+from sao_store_index import StoreSearcher
+
+searcher = StoreSearcher("/path/to/SAO-Store")
+results = searcher.search("提醒")       # → [SearchResult(name="reminder", score=80, ...)]
+all_skills = searcher.list_all("skill")  # → [ComponentInfo(...)]
+```
+
+> 完整文档: [docs/local-index-guide.md](../docs/local-index-guide.md)
+
 ## 注意事项
 
 - 不要在 Python 代码中定义 tools，统一在 SKILL.toml 声明
 - description 要精简，消耗 Router prompt token 预算
 - `[skill.requires]` 的 env/bins/features 用于 SAO 加载时 gating 检查
 - Expert 无需代码，纯 TOML 配置
+- **新增/修改组件后必须 `python -m sao_store_index rebuild` 重建索引**
+- **SKILL.toml / Expert TOML 必须包含 `keywords` 字段，否则搜索不到**
