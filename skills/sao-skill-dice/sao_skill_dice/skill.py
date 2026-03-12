@@ -34,6 +34,58 @@ _MAX_PICK = 50
 class DiceSkill(BaseSkill):
     """轻量级随机工具，用于测试 SAO 技能安装链路."""
 
+    name = "dice"
+    description = "掷骰子、抛硬币、随机抽选"
+
+    # ------------------------------------------------------------------
+    # get_definition — 技能定义（注入 Router prompt）
+    # ------------------------------------------------------------------
+    def get_definition(self) -> dict:
+        return {
+            "name": self.name,
+            "description": self.description,
+            "tools": [
+                {
+                    "name": "roll",
+                    "description": "掷骰子，支持 NdM 或 NdM+K 格式",
+                    "args": {
+                        "notation": {
+                            "type": "string",
+                            "required": False,
+                            "description": "骰子表达式，如 1d6, 2d20, 3d8+5（默认 1d6）",
+                        },
+                    },
+                },
+                {
+                    "name": "flip",
+                    "description": "抛硬币",
+                    "args": {
+                        "count": {
+                            "type": "integer",
+                            "required": False,
+                            "description": "抛掷次数（默认 1，最大 100）",
+                        },
+                    },
+                },
+                {
+                    "name": "pick",
+                    "description": "从选项中随机抽选",
+                    "args": {
+                        "items": {
+                            "type": "string",
+                            "required": True,
+                            "description": "逗号分隔的选项列表",
+                        },
+                        "count": {
+                            "type": "integer",
+                            "required": False,
+                            "description": "抽选个数（默认 1）",
+                        },
+                    },
+                },
+            ],
+        }
+
     # ------------------------------------------------------------------
     # execute 入口
     # ------------------------------------------------------------------

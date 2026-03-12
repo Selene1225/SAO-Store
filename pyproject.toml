@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sao-store-index"
+version = "1.0.0"
+description = "SAO-Store LocalIndex — 组件搜索引擎"
+requires-python = ">=3.11"
+authors = [{ name = "SAO Team" }]
+license = { text = "MIT" }
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sao_store_index"]
