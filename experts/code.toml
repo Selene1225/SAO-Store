@@ -2,6 +2,7 @@
 name = "code"
 version = "1.0.0"
 description = "编程专家 — 覆盖代码生成、debug、解释、重构"
+keywords = "代码,编程,code,debug,bug,重构,解释代码,写代码,python,java"
 search = false
 temperature = 0.2
 

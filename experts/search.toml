@@ -2,6 +2,7 @@
 name = "search"
 version = "1.0.0"
 description = "搜索专家 — 新闻、实时信息、股价等联网查询"
+keywords = "搜索,查询,新闻,search,股价,热点,最新,今天,实时"
 search = true
 temperature = 0.5
 

@@ -2,6 +2,7 @@
 name = "translate"
 version = "1.0.0"
 description = "翻译专家 — 覆盖中英互译、多语言翻译"
+keywords = "翻译,translate,中英,英文,日语,韩语,法语,怎么说,什么意思"
 search = false
 temperature = 0.3
 

@@ -2,6 +2,7 @@
 name = "weather"
 version = "1.0.0"
 description = "天气查询专家 — 覆盖天气、气温、降雨、空气质量"
+keywords = "天气,气温,降雨,下雨,weather,温度,空气质量,穿什么,带伞"
 search = true
 temperature = 0.3
 
