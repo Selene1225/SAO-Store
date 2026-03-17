@@ -2,7 +2,7 @@
 name = "reminder"
 version = "1.0.0"
 description = "管理提醒/闹钟：创建、查看、更新、取消"
-keywords = "提醒,闹钟,定时,reminder,alarm,提醒我,别忘了,到点"
+keywords = ["提醒", "闹钟", "定时", "reminder", "alarm", "提醒我", "别忘了", "到点"]
 author = "Selene"
 weight = 1                     # 1~10 数值，越大越重。SAO 据此决定主 Agent 直调还是派 SubAgent
                                # 1~3: 轻量，主 Agent 同步直调（秒级，单次调用）
@@ -21,12 +21,14 @@ features = ["feishu"]                # SAO 功能开关（对应 config.toml [fe
 name = "set"
 description = "创建新提醒/闹钟"
 
-[tools.args.content]
+[[tools.args]]
+name = "content"
 type = "string"
 required = true
 description = "提醒内容"
 
-[tools.args.remind_time]
+[[tools.args]]
+name = "remind_time"
 type = "string"
 required = true
 description = "提醒时间，格式 YYYY-MM-DD HH:mm"
@@ -39,17 +41,20 @@ description = "查看待执行的提醒"
 name = "update"
 description = "更新提醒内容或时间"
 
-[tools.args.keyword]
+[[tools.args]]
+name = "keyword"
 type = "string"
 required = true
 description = "关键词匹配提醒"
 
-[tools.args.new_content]
+[[tools.args]]
+name = "new_content"
 type = "string"
 required = false
 description = "新提醒内容"
 
-[tools.args.new_time]
+[[tools.args]]
+name = "new_time"
 type = "string"
 required = false
 description = "新提醒时间 YYYY-MM-DD HH:mm"
@@ -58,7 +63,8 @@ description = "新提醒时间 YYYY-MM-DD HH:mm"
 name = "cancel"
 description = "取消待执行的提醒"
 
-[tools.args.keyword]
+[[tools.args]]
+name = "keyword"
 type = "string"
 required = true
 description = "关键词匹配提醒"

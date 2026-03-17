@@ -44,16 +44,14 @@ from sao_skill_reminder.skill import _parse_datetime, _ts_to_str, ReminderSkill 
 @pytest.fixture
 def skill() -> ReminderSkill:
     """创建 ReminderSkill 实例，mock 外部依赖。"""
-    ctx = MagicMock()
-    ctx.lark_client = MagicMock()
-    ctx.sender_id = "user_123"
+    lark_client = MagicMock()
 
     with patch("sao_skill_reminder.skill.get_settings") as mock_settings:
         mock_settings.return_value = MagicMock(
             feishu_bitable_app_token="test_app_token",
             feishu_bitable_reminder_table_id="test_table_id",
         )
-        s = ReminderSkill(ctx)
+        s = ReminderSkill(lark_client=lark_client)
     return s
 
 

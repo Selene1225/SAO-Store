@@ -51,9 +51,7 @@ def tmp_workspace(tmp_path: Path) -> Path:
 @pytest.fixture
 def skill(tmp_workspace: Path) -> ProgrammingSkill:
     """创建带有已初始化工作区的 ProgrammingSkill 实例。"""
-    ctx = MagicMock()
-    ctx.session_id = "test-session"
-    s = ProgrammingSkill(ctx)
+    s = ProgrammingSkill(session_id="test-session")
     s._workspace = tmp_workspace
     return s
 
@@ -278,18 +276,14 @@ class TestEnsureWorkspace:
 
     def test_raises_when_no_workspace(self):
         """工作区为 None 时应抛出 RuntimeError。"""
-        ctx = MagicMock()
-        ctx.session_id = "test"
-        s = ProgrammingSkill(ctx)
+        s = ProgrammingSkill(session_id="test")
         s._workspace = None
         with pytest.raises(RuntimeError, match="工作区未初始化"):
             s._ensure_workspace()
 
     def test_raises_when_workspace_missing(self, tmp_path: Path):
         """工作区目录不存在时应抛出 RuntimeError。"""
-        ctx = MagicMock()
-        ctx.session_id = "test"
-        s = ProgrammingSkill(ctx)
+        s = ProgrammingSkill(session_id="test")
         s._workspace = tmp_path / "nonexistent"
         with pytest.raises(RuntimeError, match="工作区未初始化"):
             s._ensure_workspace()

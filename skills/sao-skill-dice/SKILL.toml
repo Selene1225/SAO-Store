@@ -2,7 +2,7 @@
 name = "dice"
 version = "1.0.0"
 description = "掷骰子、抛硬币、随机抽选"
-keywords = "骰子,掷骰,抛硬币,随机选择,扊骰,扊色,扞骰,扞色,色子,扊色子,扞色子,抛币,dice,roll,flip,coin,random,pick,抽签,抽选"
+keywords = ["骰子", "掷骰", "抛硬币", "随机选择", "扊骰", "扊色", "扞骰", "扞色", "色子", "扊色子", "扞色子", "抛币", "dice", "roll", "flip", "coin", "random", "pick", "抽签", "抽选"]
 weight = 1
 
 [skill.requires]

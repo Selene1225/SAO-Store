@@ -15,8 +15,8 @@ _sao_mod = types.ModuleType("sao")
 _skills_mod = types.ModuleType("sao.skills")
 
 class _BaseSkill:
-    def __init__(self, ctx=None):
-        self.ctx = ctx
+    def __init__(self, **kwargs):
+        pass
 
 _skills_mod.BaseSkill = _BaseSkill  # type: ignore[attr-defined]
 _sao_mod.skills = _skills_mod  # type: ignore[attr-defined]

@@ -2,7 +2,7 @@
 name = "programming"
 version = "1.0.0"
 description = "全周期开发：需求解析→编码→测试→上线，遇阻汇报"
-keywords = "编程,开发,写代码,coding,programming,编码,测试,部署,git,写程序"
+keywords = ["编程", "开发", "写代码", "coding", "programming", "编码", "测试", "部署", "git", "写程序"]
 author = "Selene"
 weight = 8                     # 重量级 — SubAgent 异步管理多轮开发循环
                                # SubAgent 循环: init → write → run(test) → fix → push
@@ -20,12 +20,14 @@ features = []                        # 无特殊功能依赖
 name = "init"
 description = "初始化工作区：clone 仓库或创建空目录"
 
-[tools.args.repo_url]
+[[tools.args]]
+name = "repo_url"
 type = "string"
 required = false
 description = "Git 仓库地址（留空则创建空目录）"
 
-[tools.args.branch]
+[[tools.args]]
+name = "branch"
 type = "string"
 required = false
 description = "分支名（默认 main）"
@@ -34,12 +36,14 @@ description = "分支名（默认 main）"
 name = "write_file"
 description = "创建或覆盖工作区中的文件"
 
-[tools.args.path]
+[[tools.args]]
+name = "path"
 type = "string"
 required = true
 description = "文件相对路径"
 
-[tools.args.content]
+[[tools.args]]
+name = "content"
 type = "string"
 required = true
 description = "文件内容"
@@ -48,7 +52,8 @@ description = "文件内容"
 name = "read_file"
 description = "读取工作区中的文件内容"
 
-[tools.args.path]
+[[tools.args]]
+name = "path"
 type = "string"
 required = true
 description = "文件相对路径"
@@ -57,12 +62,14 @@ description = "文件相对路径"
 name = "run"
 description = "在工作区执行 shell 命令（测试/构建/lint）"
 
-[tools.args.command]
+[[tools.args]]
+name = "command"
 type = "string"
 required = true
 description = "要执行的命令"
 
-[tools.args.timeout]
+[[tools.args]]
+name = "timeout"
 type = "integer"
 required = false
 description = "超时秒数（默认 120）"
@@ -71,12 +78,14 @@ description = "超时秒数（默认 120）"
 name = "push"
 description = "提交并推送代码到远程仓库"
 
-[tools.args.message]
+[[tools.args]]
+name = "message"
 type = "string"
 required = true
 description = "commit message"
 
-[tools.args.branch]
+[[tools.args]]
+name = "branch"
 type = "string"
 required = false
 description = "推送分支（默认当前分支）"

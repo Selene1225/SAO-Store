@@ -44,19 +44,21 @@ skills/sao-skill-{name}/
 
 ### SKILL.toml 必须包含
 
-- `[skill]`: name, version, description (≤30字), weight (1-10), **keywords** (逗号分隔的中英文关键词)
+- `[skill]`: name, version, description (≤30字), weight (1-10), **keywords** (字符串数组)
 - `[skill.requires]`: sao 版本 + env/bins/features gating 字段
-- `[[tools]]`: 每个 tool 有 name + description + args
+- `[[tools]]`: 每个 tool 有 name + description + `[[tools.args]]` (array of tables)
 - `[[examples]]`: 至少 2 个，不超过 4 个
 - `[skill.instructions]`: SubAgent 工作流指令（weight ≥ 5 必填）
 
-> **keywords 规范**: 中文高频触发词在前，英文在后，10-20 个词。
-> 例: `keywords = "骰子,掷骰,抛硬币,dice,roll,flip"`
+> **keywords 规范**: 字符串数组格式，中文高频触发词在前，英文在后，10-20 个词。
+> 例: `keywords = ["骰子", "掷骰", "抛硬币", "dice", "roll", "flip"]`
+>
+> **args 格式**: 必须使用 `[[tools.args]]` array of tables，不能用 `[tools.args.xxx]` inline table。
 
 ### Python 代码规范
 
 - 继承 `sao.skills.BaseSkill`
-- `__init__(self, ctx: SkillContext)` — 从 ctx 获取资源，不做 IO
+- `__init__(self, **kwargs)` — 通过 kwargs 接收 channel 注入的依赖（如 `lark_client`），不做 IO
 - `execute(self, tool, args, ctx)` — 用 dict dispatch handler
 - 所有 handler 方法命名: `_handle_{tool_name}`
 - 参数校验放在 handler 开头，缺参直接返回 `⚠️` 提示

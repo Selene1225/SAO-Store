@@ -35,9 +35,9 @@ class ProgrammingSkill(BaseSkill):
     name = "programming"
     description = "全周期开发：需求解析→编码→测试→上线，遇阻汇报"
 
-    def __init__(self, ctx: SkillContext) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self._workspace: Path | None = None
-        self._session_id: str = ctx.session_id
+        self._session_id: str = kwargs.get("session_id", "default")
 
     # ── 技能入口 ──────────────────────────────────────
 

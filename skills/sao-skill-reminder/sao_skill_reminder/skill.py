@@ -64,10 +64,10 @@ class ReminderSkill(BaseSkill):
     name = "reminder"
     description = "管理提醒/闹钟：创建、查看、更新、取消提醒，数据存储在飞书多维表格"
 
-    def __init__(self, ctx: SkillContext) -> None:
-        """统一构造函数：所有 Skill 接收 SkillContext，从中获取所需资源。"""
+    def __init__(self, **kwargs: Any) -> None:
+        """接收 channel 注入的依赖。"""
         settings = get_settings()
-        self._client = ctx.lark_client
+        self._client = kwargs.get("lark_client")
         self._app_token = settings.feishu_bitable_app_token
         self._table_id = settings.feishu_bitable_reminder_table_id
 
