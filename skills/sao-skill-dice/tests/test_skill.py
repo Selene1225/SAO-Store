@@ -78,13 +78,13 @@ class TestRoll:
         with patch("sao_skill_dice.skill.random") as mock_random:
             mock_random.randint.return_value = 3
             result = await skill.execute("roll", {"notation": "2d6+5"})
-            assert "**11**" in result  # 3 + 3 + 5
+            assert "= 11" in result  # 3 + 3 + 5
 
     async def test_notation_with_negative_modifier(self, skill: DiceSkill):
         with patch("sao_skill_dice.skill.random") as mock_random:
             mock_random.randint.return_value = 4
             result = await skill.execute("roll", {"notation": "1d6-2"})
-            assert "**2**" in result  # 4 - 2
+            assert "= 2" in result  # 4 - 2
 
     async def test_invalid_notation(self, skill: DiceSkill):
         result = await skill.execute("roll", {"notation": "abc"})
@@ -146,7 +146,7 @@ class TestFlip:
         with patch("sao_skill_dice.skill.random") as mock_random:
             mock_random.choice.return_value = "正面"
             result = await skill.execute("flip", {})
-            assert "**正面**" in result
+            assert "正面" in result
 
 
 # ===========================================================================
@@ -192,10 +192,10 @@ class TestPick:
         with patch("sao_skill_dice.skill.random") as mock_random:
             mock_random.sample.return_value = ["火锅"]
             result = await skill.execute("pick", {"items": " 火锅 , 烧烤 , 麻辣烫 "})
-            assert "**火锅**" in result
+            assert "火锅" in result
 
     async def test_pick_deterministic(self, skill: DiceSkill):
         with patch("sao_skill_dice.skill.random") as mock_random:
             mock_random.sample.return_value = ["烧烤"]
             result = await skill.execute("pick", {"items": "火锅,烧烤,麻辣烫"})
-            assert "**烧烤**" in result
+            assert "烧烤" in result

@@ -81,7 +81,7 @@ class DiceSkill(BaseSkill):
 
         parts = " + ".join(str(r) for r in rolls)
         mod_str = f" {'+' if mod >= 0 else '-'} {abs(mod)}" if mod else ""
-        return f"🎲 {notation} → [{parts}]{mod_str} = **{total}**"
+        return f"🎲 {notation} → [{parts}]{mod_str} = {total}"
 
     # ------------------------------------------------------------------
     # flip — 抛硬币
@@ -93,7 +93,7 @@ class DiceSkill(BaseSkill):
 
         results = [random.choice(["正面", "反面"]) for _ in range(count)]
         if count == 1:
-            return f"🪙 抛硬币 → **{results[0]}**"
+            return f"🪙 抛硬币 → {results[0]}"
 
         summary = ", ".join(results)
         heads = results.count("正面")
@@ -122,5 +122,5 @@ class DiceSkill(BaseSkill):
 
         picked = random.sample(items, count)
         if count == 1:
-            return f"🎯 随机抽选 → **{picked[0]}**"
-        return f"🎯 随机抽选 {count} 个 → **{'、'.join(picked)}**"
+            return f"🎯 随机抽选 → {picked[0]}"
+        return f"🎯 随机抽选 {count} 个 → {'、'.join(picked)}"
