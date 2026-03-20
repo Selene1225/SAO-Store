@@ -14,6 +14,9 @@ dependencies = [
 [project.entry-points."sao.skills"]
 dice = "sao_skill_dice:DiceSkill"
 
+[tool.setuptools.package-data]
+sao_skill_dice = ["SKILL.toml"]
+
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
 

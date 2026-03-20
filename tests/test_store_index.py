@@ -35,7 +35,8 @@ def _write_skill(
 ) -> Path:
     """在 tmp_path 中写入一个 SKILL.toml，返回技能目录."""
     skill_dir = base / "skills" / f"sao-skill-{name}"
-    skill_dir.mkdir(parents=True, exist_ok=True)
+    pkg_dir = skill_dir / f"sao_skill_{name}"
+    pkg_dir.mkdir(parents=True, exist_ok=True)
 
     # 构造 keywords / aliases 行
     if keyword_format == "array" and keywords:
@@ -63,7 +64,7 @@ description = "{description}"
 weight = {weight}
 {tools_block}
 """
-    (skill_dir / "SKILL.toml").write_text(content, encoding="utf-8")
+    (pkg_dir / "SKILL.toml").write_text(content, encoding="utf-8")
     return skill_dir
 
 
@@ -211,15 +212,17 @@ class TestIndexer:
 
     def test_scan_ignores_invalid_toml(self, tmp_store: Path):
         bad = tmp_store / "skills" / "sao-skill-bad"
-        bad.mkdir()
-        (bad / "SKILL.toml").write_text("{{{invalid toml", encoding="utf-8")
+        bad_pkg = bad / "sao_skill_bad"
+        bad_pkg.mkdir(parents=True)
+        (bad_pkg / "SKILL.toml").write_text("{{{invalid toml", encoding="utf-8")
         comps = [c for c in StoreIndexer(tmp_store).scan() if c.type == "skill"]
         assert len(comps) == 2
 
     def test_scan_handles_missing_name(self, tmp_store: Path):
         noname = tmp_store / "skills" / "sao-skill-noname"
-        noname.mkdir()
-        (noname / "SKILL.toml").write_text('[skill]\nversion = "1.0.0"', encoding="utf-8")
+        noname_pkg = noname / "sao_skill_noname"
+        noname_pkg.mkdir(parents=True)
+        (noname_pkg / "SKILL.toml").write_text('[skill]\nversion = "1.0.0"', encoding="utf-8")
         comps = [c for c in StoreIndexer(tmp_store).scan() if c.type == "skill"]
         assert len(comps) == 2
 

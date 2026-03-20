@@ -15,6 +15,9 @@ dependencies = [
 [project.entry-points."sao.skills"]
 browser = "sao_skill_browser:BrowserSkill"
 
+[tool.setuptools.package-data]
+sao_skill_browser = ["SKILL.toml"]
+
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
 

@@ -371,7 +371,7 @@ class TestInit:
         """无 repo_url 时创建空工作区。"""
         ctx = MagicMock()
         ctx.session_id = "init-test"
-        s = ProgrammingSkill(ctx)
+        s = ProgrammingSkill(session_id="init-test")
 
         from sao_skill_programming import skill as skill_mod
         original = skill_mod._WORKSPACES_ROOT

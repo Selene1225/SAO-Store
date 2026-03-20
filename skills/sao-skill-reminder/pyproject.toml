@@ -27,5 +27,8 @@ reminder = "sao_skill_reminder:ReminderSkill"
 [tool.setuptools.packages.find]
 include = ["sao_skill_reminder*"]
 
+[tool.setuptools.package-data]
+sao_skill_reminder = ["SKILL.toml"]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

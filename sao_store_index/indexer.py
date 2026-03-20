@@ -48,7 +48,12 @@ class StoreIndexer:
         if skills_dir.is_dir():
             for skill_dir in sorted(skills_dir.iterdir()):
                 if skill_dir.is_dir() and skill_dir.name.startswith("sao-skill-"):
-                    toml_path = skill_dir / "SKILL.toml"
+                    # SKILL.toml 位于包目录内 (sao_skill_{name}/SKILL.toml)
+                    pkg_name = skill_dir.name.replace("-", "_")
+                    toml_path = skill_dir / pkg_name / "SKILL.toml"
+                    if not toml_path.exists():
+                        # 兼容旧布局: 根目录下的 SKILL.toml
+                        toml_path = skill_dir / "SKILL.toml"
                     if toml_path.exists():
                         comp = self._parse_skill(toml_path, skill_dir)
                         if comp:

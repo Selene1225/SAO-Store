@@ -32,11 +32,11 @@ SAO-Store 是 Super-Agent-OS（SAO）的组件仓库，包含两类组件：
 
 ```
 skills/sao-skill-{name}/
-├── SKILL.toml                    # 元数据 + tools + examples + instructions
 ├── pyproject.toml                # pip 包配置 + entry-points + pytest config
 ├── sao_skill_{name}/
 │   ├── __init__.py               # 导出 XxxSkill
-│   └── skill.py                  # 实现 BaseSkill 子类
+│   ├── skill.py                  # 实现 BaseSkill 子类
+│   └── SKILL.toml                # 元数据 + tools + examples + instructions
 └── tests/
     ├── __init__.py
     └── test_skill.py             # 单元测试（必须通过才能上线）

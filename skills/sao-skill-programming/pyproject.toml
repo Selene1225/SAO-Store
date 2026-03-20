@@ -26,5 +26,8 @@ programming = "sao_skill_programming:ProgrammingSkill"
 [tool.setuptools.packages.find]
 include = ["sao_skill_programming*"]
 
+[tool.setuptools.package-data]
+sao_skill_programming = ["SKILL.toml"]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
