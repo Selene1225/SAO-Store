@@ -164,9 +164,11 @@ class IcmSkill(BaseSkill):
             contact = inc.get("ContactAlias", "?")
             hits = inc.get("HitCount", 0)
 
+            icm_url = f"https://portal.microsofticm.com/imp/v3/incidents/details/{inc_id}/home"
             line = f"  **{inc_id}** | {sev} | {state_val} | {title}"
             team_name = inc.get("OwningTeamName", "?")
             line += f"\n    📂 {team_name} | 👤 {contact} | 🕐 {created} | 命中 {hits} 次"
+            line += f"\n    🔗 {icm_url}"
             if inc.get("IsCustomerImpacting"):
                 line += " | ⚠️客户影响"
             lines.append(line)
@@ -195,8 +197,10 @@ class IcmSkill(BaseSkill):
             return f"⚠️ 未找到 incident {incident_id}"
 
         sev = _SEVERITY_LABELS.get(inc.get("Severity", 0), f"Sev{inc.get('Severity')}")
+        icm_url = f"https://portal.microsofticm.com/imp/v3/incidents/details/{inc['Id']}/home"
         lines = [
             f"🔍 ICM {inc['Id']} 详情\n",
+            f"**链接**: {icm_url}",
             f"**标题**: {inc.get('Title', '?')}",
             f"**严重级别**: {sev}",
             f"**状态**: {inc.get('State', '?')}",
