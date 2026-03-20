@@ -1,0 +1,66 @@
+[skill]
+name = "copilot-cli"
+version = "1.0.0"
+description = "委派任务给本地 AI CLI 代理执行"
+weight = 5
+keywords = ["copilot", "cli", "delegate", "委派", "代理", "agent", "自动化", "copilot cli", "github copilot", "claude", "刷题", "leetcode", "算法", "执行任务"]
+
+[skill.requires]
+sao = ">=2.0.0"
+
+[skill.instructions]
+text = """
+委派任务给本地 AI CLI 代理（如 GitHub Copilot CLI、Claude Code CLI）执行。
+
+工作流：
+1. 接收用户的任务描述
+2. 调用配置的 CLI 代理（默认 gh copilot）
+3. 捕获输出并返回结果
+
+支持的 CLI 预设：
+- copilot — gh copilot suggest -t shell（默认）
+- claude — claude -p（Claude Code CLI，需 npm 安装）
+
+环境变量：
+- SAO_COPILOT_CLI_PRESET — 默认预设名（copilot / claude）
+- SAO_COPILOT_CLI_CMD — 自定义 CLI 命令（覆盖预设）
+
+注意：gh copilot 需要先 gh auth login；claude 需要先 npm install -g @anthropic-ai/claude-code。
+"""
+
+[[tools]]
+name = "run"
+description = "委派任务给本地 AI CLI 代理执行，返回执行结果"
+
+[[tools.args]]
+name = "prompt"
+type = "string"
+description = "任务描述 / 提示词"
+required = true
+
+[[tools.args]]
+name = "cli"
+type = "string"
+description = "CLI 预设名（copilot / claude），不填则用默认"
+required = false
+
+[[tools.args]]
+name = "timeout"
+type = "integer"
+description = "超时秒数，默认 120，最大 600"
+required = false
+
+[[examples]]
+user = "帮我从 LeetCode 顺序找 3 道算法题"
+tool = "run"
+args = { prompt = "从 LeetCode 上按题号顺序找 3 道算法题，给出题目链接、难度和简要描述" }
+
+[[examples]]
+user = "让 copilot 帮我写一个快排"
+tool = "run"
+args = { prompt = "用 Python 实现快速排序算法，包含注释和测试用例" }
+
+[[examples]]
+user = "用 claude 帮我分析这段代码的性能问题"
+tool = "run"
+args = { prompt = "分析以下代码的性能瓶颈并给出优化建议：...", cli = "claude" }

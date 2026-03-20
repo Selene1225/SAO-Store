@@ -4,7 +4,7 @@
 [meta]
 version = "1.0.0"
 updated = "2026-03-20"
-skill_count = 5
+skill_count = 6
 expert_count = 5
 
 [[skills]]
@@ -16,6 +16,16 @@ aliases = []
 path = "skills/sao-skill-browser"
 weight = 2
 tools = ["navigate", "get_content", "screenshot", "click", "fill", "close"]
+
+[[skills]]
+name = "copilot-cli"
+version = "1.0.0"
+description = "委派任务给本地 AI CLI 代理执行"
+keywords = ["copilot", "cli", "delegate", "委派", "代理", "agent", "自动化", "copilot cli", "github copilot", "claude", "刷题", "leetcode", "算法", "执行任务"]
+aliases = []
+path = "skills/sao-skill-copilot-cli"
+weight = 5
+tools = ["run"]
 
 [[skills]]
 name = "dice"

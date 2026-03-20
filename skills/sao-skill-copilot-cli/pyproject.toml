@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sao-skill-copilot-cli"
+version = "1.0.0"
+description = "委派任务给本地 AI CLI 代理（Copilot / Claude）执行"
+requires-python = ">=3.11"
+dependencies = [
+    "super-agent-os>=2.0.0",
+]
+
+[project.entry-points."sao.skills"]
+copilot-cli = "sao_skill_copilot_cli:CopilotCliSkill"
+
+[tool.setuptools.package-data]
+sao_skill_copilot_cli = ["SKILL.toml"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
