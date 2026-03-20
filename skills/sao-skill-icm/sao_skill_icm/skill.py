@@ -165,7 +165,8 @@ class IcmSkill(BaseSkill):
             hits = inc.get("HitCount", 0)
 
             line = f"  **{inc_id}** | {sev} | {state_val} | {title}"
-            line += f"\n    👤 {contact} | 🕐 {created} | 命中 {hits} 次"
+            team_name = inc.get("OwningTeamName", "?")
+            line += f"\n    📂 {team_name} | 👤 {contact} | 🕐 {created} | 命中 {hits} 次"
             if inc.get("IsCustomerImpacting"):
                 line += " | ⚠️客户影响"
             lines.append(line)
