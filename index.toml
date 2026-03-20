@@ -3,15 +3,25 @@
 
 [meta]
 version = "1.0.0"
-updated = "2026-03-12"
-skill_count = 3
+updated = "2026-03-20"
+skill_count = 4
 expert_count = 5
+
+[[skills]]
+name = "browser"
+version = "1.0.0"
+description = "浏览器自动化：导航、读取页面、截图、点击交互"
+keywords = ["浏览器", "网页", "打开网站", "截图", "browser", "web", "navigate", "screenshot", "ICM", "页面"]
+aliases = []
+path = "skills/sao-skill-browser"
+weight = 2
+tools = ["navigate", "get_content", "screenshot", "click", "fill", "close"]
 
 [[skills]]
 name = "dice"
 version = "1.0.0"
 description = "掷骰子、抛硬币、随机抽选"
-keywords = ["骰子", "掷骰", "抛硬币", "随机选择", "扊骰", "扊色", "扞骰", "扞色", "扔骰", "扔色", "色子", "扊色子", "扞色子", "扔色子", "抛币", "dice", "roll", "flip", "coin", "random", "pick", "抽签", "抽选"]
+keywords = ["骰子", "掷骰", "抛硬币", "随机选择", "扊骰", "扊色", "扞骰", "扞色", "色子", "扊色子", "扞色子", "抛币", "dice", "roll", "flip", "coin", "random", "pick", "抽签", "抽选"]
 aliases = []
 path = "skills/sao-skill-dice"
 weight = 1

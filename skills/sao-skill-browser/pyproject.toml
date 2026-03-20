@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sao-skill-browser"
+version = "1.0.0"
+description = "浏览器自动化：导航、读取页面、截图、点击交互"
+requires-python = ">=3.11"
+dependencies = [
+    "super-agent-os>=2.0.0",
+    "playwright>=1.40.0",
+]
+
+[project.entry-points."sao.skills"]
+browser = "sao_skill_browser:BrowserSkill"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

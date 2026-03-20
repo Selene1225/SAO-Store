@@ -1,0 +1,97 @@
+[skill]
+name = "browser"
+version = "1.0.0"
+description = "浏览器自动化：导航、读取页面、截图、点击交互"
+author = "Selene"
+keywords = ["浏览器", "网页", "打开网站", "截图", "browser", "web", "navigate", "screenshot", "ICM", "页面"]
+weight = 2                     # 轻量：单次浏览器操作，秒级完成
+                               # 但比纯计算稍重，需启动/复用浏览器实例
+
+[skill.requires]
+sao = ">=2.0.0"
+env = []
+bins = []
+features = []
+
+# ── Tools 定义 ──
+
+[[tools]]
+name = "navigate"
+description = "导航到指定 URL，返回页面标题"
+
+[[tools.args]]
+name = "url"
+type = "string"
+required = true
+description = "目标网页地址"
+
+[[tools.args]]
+name = "wait"
+type = "integer"
+required = false
+description = "额外等待秒数（默认 0，用于等待动态内容加载）"
+
+[[tools]]
+name = "get_content"
+description = "获取当前页面的文本内容"
+
+[[tools.args]]
+name = "selector"
+type = "string"
+required = false
+description = "CSS 选择器，只提取匹配元素的文本（留空则获取整个页面）"
+
+[[tools]]
+name = "screenshot"
+description = "对当前页面截图"
+
+[[tools.args]]
+name = "full_page"
+type = "boolean"
+required = false
+description = "是否截取整个页面（默认 false，只截可视区域）"
+
+[[tools]]
+name = "click"
+description = "点击页面上的元素"
+
+[[tools.args]]
+name = "selector"
+type = "string"
+required = true
+description = "CSS 选择器，定位要点击的元素"
+
+[[tools]]
+name = "fill"
+description = "在输入框中填入文本"
+
+[[tools.args]]
+name = "selector"
+type = "string"
+required = true
+description = "CSS 选择器，定位输入框"
+
+[[tools.args]]
+name = "value"
+type = "string"
+required = true
+description = "要填入的文本"
+
+[[tools]]
+name = "close"
+description = "关闭浏览器，释放资源"
+
+# ── 示例 ──
+
+[[examples]]
+user = "打开 https://icm.ad.msft.net 看看有什么新 incident"
+tool = "navigate"
+args = { url = "https://icm.ad.msft.net" }
+
+[[examples]]
+user = "把页面内容读出来"
+tool = "get_content"
+
+[[examples]]
+user = "给当前页面截个图"
+tool = "screenshot"
