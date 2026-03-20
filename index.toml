@@ -4,7 +4,7 @@
 [meta]
 version = "1.0.0"
 updated = "2026-03-20"
-skill_count = 4
+skill_count = 5
 expert_count = 5
 
 [[skills]]
@@ -26,6 +26,16 @@ aliases = []
 path = "skills/sao-skill-dice"
 weight = 1
 tools = ["roll", "flip", "pick"]
+
+[[skills]]
+name = "icm"
+version = "1.0.0"
+description = "查询 ICM incidents：按队列/日期/状态筛选"
+keywords = ["ICM", "incident", "事件", "告警", "oncall", "DRI", "query", "微软", "故障", "工单"]
+aliases = []
+path = "skills/sao-skill-icm"
+weight = 2
+tools = ["query", "get_incident", "summary"]
 
 [[skills]]
 name = "programming"

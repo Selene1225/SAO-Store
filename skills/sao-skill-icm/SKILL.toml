@@ -1,0 +1,92 @@
+[skill]
+name = "icm"
+version = "1.0.0"
+description = "查询 ICM incidents：按队列/日期/状态筛选"
+author = "Selene"
+keywords = ["ICM", "incident", "事件", "告警", "oncall", "DRI", "query", "微软", "故障", "工单"]
+weight = 2                     # 轻量：拿 token + 一次 API 调用，秒级完成
+
+[skill.requires]
+sao = ">=2.0.0"
+env = []
+bins = []
+features = []
+
+# ── Tools 定义 ──
+
+[[tools]]
+name = "query"
+description = "查询指定队列的 ICM incidents（默认查昨天新建的）"
+
+[[tools.args]]
+name = "team_id"
+type = "integer"
+required = false
+description = "OwningTeamId（默认使用环境变量 SAO_ICM_TEAM_ID）"
+
+[[tools.args]]
+name = "days"
+type = "integer"
+required = false
+description = "查最近几天的 incidents（默认 1 = 昨天）"
+
+[[tools.args]]
+name = "state"
+type = "string"
+required = false
+description = "筛选状态: Active / Mitigated / Resolved（留空不筛选）"
+
+[[tools.args]]
+name = "severity"
+type = "integer"
+required = false
+description = "筛选严重级别: 1-4（留空不筛选）"
+
+[[tools.args]]
+name = "top"
+type = "integer"
+required = false
+description = "最多返回条数（默认 50）"
+
+[[tools]]
+name = "get_incident"
+description = "查询单个 incident 详情"
+
+[[tools.args]]
+name = "incident_id"
+type = "integer"
+required = true
+description = "Incident ID"
+
+[[tools]]
+name = "summary"
+description = "统计摘要：按 severity 和状态分组汇总"
+
+[[tools.args]]
+name = "team_id"
+type = "integer"
+required = false
+description = "OwningTeamId（默认使用环境变量 SAO_ICM_TEAM_ID）"
+
+[[tools.args]]
+name = "days"
+type = "integer"
+required = false
+description = "统计最近几天（默认 1）"
+
+# ── 示例 ──
+
+[[examples]]
+user = "查一下昨天 Content Processing DRI 有什么新 ICM"
+tool = "query"
+args = { team_id = 131477, days = 1 }
+
+[[examples]]
+user = "看看 ICM 12345678 的详情"
+tool = "get_incident"
+args = { incident_id = 12345678 }
+
+[[examples]]
+user = "这周的 ICM 统计情况"
+tool = "summary"
+args = { days = 7 }
